@@ -1,3 +1,5 @@
+
+
 # Provided, don't edit
 require 'directors_database'
 
@@ -48,6 +50,10 @@ def movies_with_director_key(name, movies_collection)
   # Array of Hashes where each Hash represents a movie; however, they should all have a
   # :director_name key. This addition can be done by using the provided
   # movie_with_director_name method
+  for i in 0...movies_collection.length do
+      movies_collection[i][:director_name] = name
+  end
+  return movies_collection
 end
 
 
@@ -63,19 +69,40 @@ def gross_per_studio(collection)
   #
   # Hash whose keys are the studio names and whose values are the sum
   # total of all the worldwide_gross numbers for every movie in the input Hash
+  pp collection[0]
+  studios_totals = {}
+  for i in 0...collection.length do
+      if collection[i].key?(:movies)
+        for j in 0...collection[i][:movies].length do
+              if studios_totals.key?(collection[i][:movies][j][:studio])
+                studios_totals[collection[i][:movies][j][:studio]] += collection[i][:movies][j][:worldwide_gross]
+              else
+                studios_totals[collection[i][:movies][j][:studio]] = collection[i][:movies][j][:worldwide_gross]
+              end
+        end
+      else
+        if studios_totals.key?(collection[i][:studio])
+          studios_totals[collection[i][:studio]] += collection[i][:worldwide_gross]
+        else
+          studios_totals[collection[i][:studio]] = collection[i][:worldwide_gross]
+        end
+      end
+  end
+  return studios_totals
 end
 
 def movies_with_directors_set(source)
-  # GOAL: For each director, find their :movies Array and stick it in a new Array
-  #
-  # INPUT:
-  # * source: An Array of Hashes containing director information including
-  # :name and :movies
-  #
-  # RETURN:
-  #
-  # Array of Arrays containing all of a director's movies. Each movie will need
-  # to have a :director_name key added to it.
+  arr = []
+  for i in 0...source.length do 
+     for j in 0...source[i][:movies].length do 
+          source[i][:movies][j][:director_name] = source[i][:name]
+      end
+      set = {:director_name => source[i][:name], :movies => source[i][:movies]}
+      a = []
+      a << set
+      arr << a
+  end
+  arr
 end
 
 # ----------------    End of Your Code Region --------------------
